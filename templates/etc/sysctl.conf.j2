@@ -1,0 +1,11 @@
+# {{ template_destpath }}
+# vim: set noai sw=4 tw=4 ts=4 et:
+# {{ ansible_managed }}
+# entries: {{ sysctl_conf | length }}
+
+{% for setting in sysctl_conf | sort(attribute='key') %}
+{% if setting.comment is defined %}
+# {{ setting.comment | string }}
+{% endif %}
+{{ setting.key | string }}={{ setting.value }}
+{% endfor %}

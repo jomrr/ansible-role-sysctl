@@ -1,0 +1,72 @@
+---
+# role: ansible-role-sysctl
+# file: defaults/main.yml
+
+# The role is disabled by default, so you do not get in trouble.
+# Checked in tasks/main.yml which uses a tasks block if enabled.
+sysctl_role_enabled: false
+
+# Backup sysctl config files
+sysctl_backup: yes
+
+# Settings for /etc/sysctl.conf. These setting always take precedence
+# over sysctl.d config files, order is:
+# - /run/sysctl.d/*.conf
+# - /etc/sysctl.d/*.conf
+# - /usr/local/lib/sysctl.d/*.conf
+# - /usr/lib/sysctl.d/*.conf
+# - /lib/sysctl.d/*.conf
+# - /etc/sysctl.conf
+sysctl_conf:
+  - key: kernel.dmesg_restrict
+    value: 1
+    comment: "restrict unprivileged access to kernel syslog"
+
+# Config files in /etc/sysctl.d/*. File names are {{ order }}-{{ file }}.conf.
+sysctl_d:
+  # basic ipv4 settings and hardening
+  - file: ipv4
+    order: 98
+    settings:
+      - key: net.core.netdev_max_backlog
+        value: 8192
+        comment: "Increasing the size of the receive queue."
+      - key: net.ipv4.tcp_fastopen
+        value: 3
+        comment: "Enable TCP Fast Open."
+      - key: net.ipv4.tcp_tw_reuse
+        value: 1
+        comment: "Reuse an existing connection in the TIME-WAIT state for a new outgoing connection."
+      - key: net.ipv4.conf.all.rp_filter
+        value: 1
+        comment: "Enable reverse path filtering."
+      - key: net.ipv4.conf.all.log_martians
+        value: 1
+        comment: "Log martian packets."
+      - key: net.ipv4.neigh.default.gc_interval
+        value: 30
+        comment: "Decrease the ARP cache cleanup interval."
+      - key: net.ipv4.icmp_echo_ignore_broadcasts
+        value: 1
+        comment: "Disable ICMP broadcast echo activity."
+      - key: net.ipv4.conf.all.accept_redirects
+        value: 0
+        comment: "Do not accept ICMP routing redirects."
+      - key: net.ipv4.conf.all.shared_media
+        value: 1
+        comment: "Disable ICMP routing redirects."
+      - key: net.ipv4.conf.all.secure_redirects
+        value: 1
+        comment: "Allow secure ICMP routing redirects."
+      - key: net.ipv4.conf.all.send_redirects
+        value: 0
+        comment: "Send ICMP routing redirects."
+      - key: net.ipv4.tcp_syncookies
+        value: 1
+        comment: "Enable TCP/IP SYN cookies."
+      - key: net.ipv4.tcp_fin_timeout
+        value: 3
+        comment: "Reduce the amount of time a closing tcp circuit can stay in the TIME_WAIT state."
+      - key: net.ipv4.tcp_rfc1337
+        value: 1
+        comment: "Protect against tcp time-wait assassination hazards, drop RST packets for sockets in the time-wait state."

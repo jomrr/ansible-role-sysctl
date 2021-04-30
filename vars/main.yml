@@ -1,0 +1,17 @@
+---
+# role: ansible-role-sysctl
+# file: vars/main.yml
+
+_sysctl_packages:
+  Alpine:
+    - procps
+  Archlinux:
+    - procps-ng
+  Debian:
+    - procps
+  RedHat:
+    - procps-ng
+  Suse:
+    - procps
+
+sysctl_packages: "{{ _sysctl_packages[ansible_os_family] | default([]) }}"

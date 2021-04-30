@@ -1,0 +1,6 @@
+---
+# role: ansible-role-sysctl
+# file: handlers/main.yml
+
+- name: reload sysctl
+  command: sysctl --system
