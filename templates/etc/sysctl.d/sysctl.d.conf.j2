@@ -3,9 +3,6 @@
 # {{ ansible_managed }}
 # entries: {{ item.settings | length }}
 
-{% for setting in item.settings | sort(attribute='key') %}
-{%  if setting.comment is defined %}
-# {{ setting.comment | string }}
-{%  endif %}
+{% for setting in item.settings | dict2items | sort(attribute='key') %}
 {{ setting.key | string }}={{ setting.value }}
 {% endfor %}
