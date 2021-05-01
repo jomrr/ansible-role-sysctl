@@ -56,7 +56,4 @@ galaxy_info:
 
   galaxy_tags: []
 
-  dependencies:
-    - src: https://github.com/jam82/ansible-role-baseline.git
-      name: common
-      version: main
+dependencies: []
