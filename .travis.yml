@@ -9,6 +9,10 @@ python:
 
 services: docker
 
+branches:
+  only:
+    - main
+
 cache:
   pip: true
   directories:
