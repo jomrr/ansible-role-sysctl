@@ -65,7 +65,6 @@ sysctl_d:
       net.ipv4.conf.all.accept_source_route: 0
       net.ipv4.conf.all.bootp_relay: 0
       net.ipv4.conf.all.forwarding: 0
-      net.ipv4.conf.all.log_martians: 1
       net.ipv4.conf.all.proxy_arp: 0
       net.ipv4.conf.all.rp_filter: 1
       net.ipv4.conf.all.secure_redirects: 0
@@ -83,8 +82,10 @@ sysctl_d:
       net.ipv4.tcp_timestamps: 1
       net.ipv4.tcp_tw_reuse: 1
   # basic IPv6 settings and hardening, default=disabled
+  # enable ipv6 on loopback interface for compatibility (e.g. freeipa)
   - file: 98-ipv6.conf
     settings:
+      net.ipv6.conf.lo.disable_ipv6: 0
       net.ipv6.conf.all.disable_ipv6: 1
       net.ipv6.conf.all.accept_ra_defrtr: 0
       net.ipv6.conf.all.accept_ra_pinfo: 0
