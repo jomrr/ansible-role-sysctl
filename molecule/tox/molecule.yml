@@ -18,6 +18,7 @@ platforms:
     command: ${MOLECULE_IMG_CMD:-""}
     pre_build_image: true
     privileged: true
+    tty: false
     tmpfs:
       - /tmp
       - /run

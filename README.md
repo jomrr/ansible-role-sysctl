@@ -54,6 +54,7 @@ sysctl_conf:
   kernel.randomize_va_space: 2
   kernel.sysrq: 0
   kernel.unprivileged_bpf_disabled: 1
+  kernel.unprivileged_userns_clone: 1
   kernel.yama.ptrace_scope: 2
 
 # Config files in /etc/sysctl.d/*.
