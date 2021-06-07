@@ -8,6 +8,5 @@
   vars:
     baseline_role_enabled: false
     sysctl_role_enabled: true
-  roles: # to enable required roles put them in requirements.yml and add here
-    # - baseline
-    - role: '../ansible-role-sysctl'
+  roles:
+    - role: ../../../../
