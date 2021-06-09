@@ -1,6 +1,6 @@
 # ansible-role-sysctl
 
-![GitHub](https://img.shields.io/github/license/jam82/ansible-role-sysctl) [![Build Status](https://travis-ci.org/jam82/ansible-role-sysctl.svg?branch=main)](https://travis-ci.org/jam82/ansible-role-sysctl)
+![GitHub](https://img.shields.io/github/license/jam82/ansible-role-sysctl) ![GitHub last commit](https://img.shields.io/github/last-commit/jam82/ansible-role-sysctl) ![GitHub issues](https://img.shields.io/github/issues-raw/jam82/ansible-role-sysctl) ![Travis (.com) branch](https://img.shields.io/travis/com/jam82/ansible-role-sysctl/main?label=ansible-lint%20latest)
 
 **Ansible role for configuring sysctl settings.**
 
