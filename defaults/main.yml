@@ -7,7 +7,7 @@
 sysctl_role_enabled: false
 
 # Backup sysctl config files
-sysctl_backup: yes
+sysctl_backup: true
 
 # Settings for /etc/sysctl.conf. These setting always take precedence
 # over sysctl.d config files, load order is:
