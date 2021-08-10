@@ -22,7 +22,6 @@ sysctl_conf:
   kernel.ctrl-alt-del: 0
   kernel.dmesg_restrict: 1
   kernel.kptr_restrict: 2
-  kernel.maps_protect: 1
   kernel.panic: 60
   kernel.panic_on_oops: 60
   kernel.perf_event_paranoid: 3
