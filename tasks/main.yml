@@ -17,6 +17,7 @@
         owner: root
         group: root
         backup: "{{ sysctl_backup }}"
+      when: sysctl_conf | length > 0
       notify: reload sysctl
 
     - name: "Create /etc/sysctl.d/"
