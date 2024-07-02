@@ -1,12 +1,12 @@
----
-# role: ansible-role-sysctl
+# role: jomrr.sysctl
 # file: molecule/resources/playbooks/verify.yml
+# code: language=ansible-jinja
 
-- name: Verify
+- name: "PLAYBOOK | Verify | sysctl"
   hosts: all
-  become: true
   gather_facts: false
   tasks:
-    - name: "Assertions"
-      assert:
-        that: true
+    - name: "Assert true"
+      ansible.builtin.assert:
+        that: "true"
+        fail_msg: "This should never fail"

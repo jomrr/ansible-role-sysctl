@@ -1,12 +1,10 @@
----
-# role: ansible-role-sysctl
+# role: jomrr.sysctl
 # file: molecule/resources/playbooks/converge.yml
+# code: language=ansible-jinja
 
-- name: Converge
+- name: "PLAYBOOK | Converge | sysctl"
   hosts: all
   become: true
-  vars:
-    baseline_role_enabled: false
-    sysctl_role_enabled: true
+  gather_facts: true
   roles:
-    - role: ../../../../
+    - role: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"

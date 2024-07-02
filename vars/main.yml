@@ -1,5 +1,5 @@
 ---
-# role: ansible-role-sysctl
+# role: jomrr.sysctl
 # file: vars/main.yml
 
 _sysctl_packages:

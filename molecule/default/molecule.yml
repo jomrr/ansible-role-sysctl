@@ -7,110 +7,44 @@ dependency:
   options:
     role-file: requirements.yml
 driver:
-  name: docker
+  name: podman
 lint: |
   set -e
   yamllint .
   ansible-lint
 platforms:
+  - name: sysctl-almalinux
+    image: "docker.io/jomrr/molecule-almalinux:latest"
+    pre_build_image: true
   - name: sysctl-alpine
-    image: "jomrr/molecule-alpine:latest"
+    image: "docker.io/jomrr/molecule-alpine:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-  - name: sysctl-amazonlinux
-    image: "jomrr/molecule-amazonlinux:latest"
-    pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-arch
-    image: "jomrr/molecule-archlinux:latest"
+    image: "docker.io/jomrr/molecule-archlinux:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  - name: sysctl-centos
-    image: "jomrr/molecule-centos:latest"
-    pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-debian
-    image: "jomrr/molecule-debian:latest"
+    image: "docker.io/jomrr/molecule-debian:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-fedora
-    image: "jomrr/molecule-fedora:latest"
+    image: "docker.io/jomrr/molecule-fedora:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-opensuse
-    image: "jomrr/molecule-opensuse:15"
+    image: "docker.io/jomrr/molecule-opensuse-leap:15"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-tumbleweed
-    image: "jomrr/molecule-opensuse:tumbleweed"
+    image: "docker.io/jomrr/molecule-opensuse-tumbleweed:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-oraclelinux
-    image: "jomrr/molecule-oraclelinux:latest"
+    image: "docker.io/jomrr/molecule-oraclelinux:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
   - name: sysctl-ubuntu
-    image: "jomrr/molecule-ubuntu:latest"
+    image: "docker.io/jomrr/molecule-ubuntu:latest"
     pre_build_image: true
-    privileged: true
-    tmpfs:
-      - /tmp
-      - /run
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
 provisioner:
   name: ansible
   log: true
   playbooks:
-    prepare: ../resources/playbooks/prepare.yml
     converge: ../resources/playbooks/converge.yml
     verify: ../resources/playbooks/verify.yml
-  inventory:
-    group_vars:
-      all:
-        sysctl_role_enabled: true
 verifier:
   name: ansible

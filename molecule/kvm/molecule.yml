@@ -10,46 +10,37 @@ driver:
   name: vagrant
   provider:
     name: libvirt
-    type: libvirt
-    options:
-      memory: 2048
-      cpus: 2
+  parallel: true
 lint: |
   set -e
   yamllint .
   ansible-lint
-  flake8
 platforms:
-  - name: sysctl-arch
-    box: "archlinux/archlinux"
-  - name: sysctl-centos
-    box: "centos/8"
-  - name: sysctl-debian
-    box: "debian/bullseye64"
-  - name: sysctl-fedora
-    box: "fedora/33-cloud-base"
-  - name: sysctl-opensuse
-    box: "generic/opensuse15"
-  - name: sysctl-oracle
-    box: "generic/oracle8"
-  - name: sysctl-ubuntu
-    box: "generic/ubuntu2004"
+  - name: almalinux-sysctl
+    box: "almalinux/9"
+    cpus: 2
+    memory: 2048
+  - name: debian-sysctl
+    box: "debian/bookworm64"
+    cpus: 2
+    memory: 2048
+  - name: fedora-sysctl
+    box: "fedora/40-cloud-base"
+    cpus: 2
+    memory: 2048
+  - name: ubuntu-sysctl
+    box: "cloud-image/ubuntu-24.04"
+    cpus: 2
+    memory: 2048
 provisioner:
   name: ansible
   log: true
   playbooks:
-    prepare: ../resources/playbooks/prepare.yml
     converge: ../resources/playbooks/converge.yml
     verify: ../resources/playbooks/verify.yml
   inventory:
     group_vars:
       all:
-        sysctl_role_enabled: true
+        ansible_python_interpreter: /usr/bin/python3
 verifier:
-  name: testinfra
-  env:
-    PYTHONWARNINGS: "ignore"
-  directory: ../resources/tests
-  options:
-    v: true
-    sudo: true
+  name: ansible

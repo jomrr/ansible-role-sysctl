@@ -2,5 +2,6 @@
 # role: ansible-role-sysctl
 # file: handlers/main.yml
 
-- name: reload sysctl
-  command: sysctl --system
+- name: "Reload sysctl"
+  ansible.builtin.command: sysctl --system
+  changed_when: false

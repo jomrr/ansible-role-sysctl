@@ -2,10 +2,6 @@
 # role: ansible-role-sysctl
 # file: defaults/main.yml
 
-# The role is disabled by default, so you do not get in trouble.
-# Checked in tasks/main.yml which uses a tasks block if enabled.
-sysctl_role_enabled: false
-
 # Backup sysctl config files
 sysctl_backup: true
 
@@ -17,19 +13,7 @@ sysctl_backup: true
 # - /usr/lib/sysctl.d/*.conf
 # - /lib/sysctl.d/*.conf
 # - /etc/sysctl.conf
-sysctl_conf:
-  kernel.core_uses_pid: 1
-  kernel.ctrl-alt-del: 0
-  kernel.dmesg_restrict: 1
-  kernel.kptr_restrict: 2
-  kernel.panic: 60
-  kernel.panic_on_oops: 60
-  kernel.perf_event_paranoid: 3
-  kernel.randomize_va_space: 2
-  kernel.sysrq: 0
-  kernel.unprivileged_bpf_disabled: 1
-  kernel.unprivileged_userns_clone: 1
-  kernel.yama.ptrace_scope: 2
+sysctl_conf: {}
 
 # Config files in /etc/sysctl.d/*.
 sysctl_d:
@@ -76,13 +60,25 @@ sysctl_d:
       net.ipv6.conf.all.router_solicitations: 0
       net.ipv6.conf.all.use_tempaddr: 2
   # default settings for fs, virutal memory...
-  - file: 99-sysctl.conf
+  - file: 98-sysctl.conf
     settings:
       dev.tty.ldisc_autoload: 0
       fs.protected_fifos: 2
       fs.protected_hardlinks: 1
       fs.protected_symlinks: 1
       fs.suid_dumpable: 0
+      kernel.core_uses_pid: 1
+      kernel.ctrl-alt-del: 0
+      kernel.dmesg_restrict: 1
+      kernel.kptr_restrict: 2
+      kernel.panic: 60
+      kernel.panic_on_oops: 60
+      kernel.perf_event_paranoid: 3
+      kernel.randomize_va_space: 2
+      kernel.sysrq: 0
+      kernel.unprivileged_bpf_disabled: 1
+      kernel.unprivileged_userns_clone: 1
+      kernel.yama.ptrace_scope: 2
       vm.dirty_background_ratio: 5
       vm.dirty_ratio: 30
       vm.min_free_kbytes: 65535
