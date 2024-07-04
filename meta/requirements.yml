@@ -3,6 +3,6 @@
 # file: meta/requirements.yml
 
 collections:
-  - community.general
+  - name: community.general
 
 roles: []
