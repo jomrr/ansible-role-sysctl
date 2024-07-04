@@ -1,5 +1,5 @@
 ---
-# name: jomrr.sysctl
+# role: jomrr.sysctl
 # file: meta/main.yml
 
 galaxy_info:

@@ -1,5 +1,5 @@
 ---
-# role: ansible-role-sysctl
+# role: jomrr.sysctl
 # file: tasks/main.yml
 
 - name: "Role sysctl | install packages"
