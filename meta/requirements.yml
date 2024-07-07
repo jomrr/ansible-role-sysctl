@@ -1,5 +1,0 @@
----
-# role: jomrr.sysctl
-# file: meta/requirements.yml
-
-- name: community.general
