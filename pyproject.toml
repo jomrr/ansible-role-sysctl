@@ -4,7 +4,7 @@ version = "0.0.0"
 description = "Ansible role for configuring sysctl settings."
 authors = ["Jonas Mauer"]
 license = "MIT"
-keywords = ["kernel","procps","sysctl"]
+keywords = ["kernel", "procps", "sysctl"]
 repository = "https://github.com/jomrr/ansible-role-sysctl"
 
 [tool.commitizen]
@@ -18,15 +18,10 @@ upload_to_vcs_release = true
 version_toml = ["pyproject.toml:project.version"]
 
 [tool.tox]
-requires = ["tox>=4.26"]
 envlist = ["lint"]
 
 [tool.tox.env.lint]
 description = "Lint code"
-always_copy = true
-skip_dist = true
 skip_install = true
 deps = ["ansible-lint"]
-commands = [
-    ["ansible-lint", "--offline", "--exclude", ".tox", ".ansible"]
-]
+commands = [["ansible-lint", "--offline"]]
