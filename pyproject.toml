@@ -1,11 +1,10 @@
 [project]
-name = "ansible-role-sysctl"
+name = "sysctl"
 version = "0.0.0"
-description = "Ansible role for setting up sysctl."
+description = "Ansible role for configuring sysctl settings."
 authors = ["Jonas Mauer"]
 license = "MIT"
-keywords = []
-
+keywords = ["kernel","procps","sysctl"]
 repository = "https://github.com/jomrr/ansible-role-sysctl"
 
 [tool.commitizen]
@@ -13,9 +12,21 @@ name = "cz_conventional_commits"
 
 [tool.semantic_release]
 commit_message = "build(release): version {version}"
-major_on_zero = true
+major_on_zero = false
 upload_to_pypi = false
 upload_to_vcs_release = true
-version_toml = [
-    "pyproject.toml:project.version",
+version_toml = ["pyproject.toml:project.version"]
+
+[tool.tox]
+requires = ["tox>=4.26"]
+envlist = ["lint"]
+
+[tool.tox.env.lint]
+description = "Lint code"
+always_copy = true
+skip_dist = true
+skip_install = true
+deps = ["ansible-lint"]
+commands = [
+    ["ansible-lint", "--offline", "--exclude", ".tox", ".ansible"]
 ]
