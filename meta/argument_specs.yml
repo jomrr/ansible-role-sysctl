@@ -1,0 +1,91 @@
+---
+# role: sysctl
+# file: meta/argument_specs.yml
+
+argument_specs:
+  main:
+    short_description: Persist kernel hardening settings and apply available namespace
+      parameters.
+    options:
+      sysctl_backup:
+        type: bool
+        default: true
+        description:
+          - Back up managed configuration files before replacing their contents.
+      sysctl_ignore_unavailable:
+        type: bool
+        default: true
+        description:
+          - Omit missing or write-protected parameters before writing configuration; false
+            fails the availability check instead.
+      sysctl_d:
+        type: list
+        elements: dict
+        default:
+          - file: 90-harden-dev-tty.conf
+            settings:
+              dev.tty.ldisc_autoload: 0
+          - file: 90-harden-fs.conf
+            settings:
+              fs.protected_fifos: 2
+              fs.protected_hardlinks: 1
+              fs.protected_regular: 2
+              fs.protected_symlinks: 1
+          - file: 90-harden-kernel.conf
+            settings:
+              kernel.dmesg_restrict: 1
+              kernel.kexec_load_disabled: 1
+              kernel.kptr_restrict: 2
+              kernel.perf_event_paranoid: 3
+              kernel.printk: 3 3 3 3
+              kernel.randomize_va_space: 2
+              kernel.sysrq: 0
+              kernel.unprivileged_bpf_disabled: 1
+              kernel.yama.ptrace_scope: 2
+          - file: 90-harden-net-core.conf
+            settings:
+              net.core.bpf_jit_harden: 2
+          - file: 90-harden-vm.conf
+            settings:
+              vm.mmap_rnd_bits: 32
+              vm.mmap_rnd_compat_bits: 16
+              vm.unprivileged_userfaultfd: 0
+          - file: 90-harden-net-ipv4.conf
+            settings:
+              net.ipv4.conf.all.accept_redirects: 0
+              net.ipv4.conf.all.accept_source_route: 0
+              net.ipv4.conf.all.rp_filter: 1
+              net.ipv4.conf.all.secure_redirects: 0
+              net.ipv4.conf.all.send_redirects: 0
+              net.ipv4.conf.default.accept_redirects: 0
+              net.ipv4.conf.default.accept_source_route: 0
+              net.ipv4.conf.default.rp_filter: 2
+              net.ipv4.conf.default.secure_redirects: 0
+              net.ipv4.conf.default.send_redirects: 0
+              net.ipv4.tcp_rfc1337: 1
+              net.ipv4.tcp_syncookies: 1
+          - file: 90-harden-net-ipv6.conf
+            settings:
+              net.ipv6.conf.all.accept_ra: 0
+              net.ipv6.conf.all.accept_redirects: 0
+              net.ipv6.conf.all.accept_source_route: 0
+              net.ipv6.conf.all.use_tempaddr: 2
+              net.ipv6.conf.default.accept_ra: 0
+              net.ipv6.conf.default.accept_redirects: 0
+              net.ipv6.conf.default.accept_source_route: 0
+              net.ipv6.conf.default.use_tempaddr: 0
+        description:
+          - Configuration files managed in /etc/sysctl.d with root ownership and mode 0600.
+          - The default seven hardening files and their 38 settings are defined in defaults/main.yml.
+        options:
+          file:
+            type: str
+            required: true
+            description:
+              - Unique .conf basename without whitespace or path separators.
+          settings:
+            type: dict
+            required: true
+            description:
+              - Kernel parameter names mapped to numeric values or strings, including space-separated
+                value lists.

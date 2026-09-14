@@ -1,0 +1,59 @@
+---
+# role: sysctl
+# file: molecule/resources/playbooks/side_effect.yml
+
+- name: SYSCTL | Exercise a changed configuration on existing state
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: SYSCTL | Change a managed sysctl.d file
+      ansible.builtin.include_role:
+        name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+      vars:
+        sysctl_d:
+          - file: 90-harden-net-ipv4.conf
+            settings:
+              net.ipv4.tcp_syncookies: 0
+              net.ipv4.sysctl_molecule_missing: 1
+
+    - name: SYSCTL | Apply the changed configuration before checking it
+      ansible.builtin.meta: flush_handlers
+
+    - name: SYSCTL | Verify the changed setting and exclusion of unavailable parameters
+      become: true
+      become_user: root
+      ansible.builtin.script:
+        cmd: "{{ (playbook_dir ~ '/../sysctl_checks.py') | quote }} changed"
+        executable: /usr/bin/python3
+      changed_when: false
+
+    - name: SYSCTL | Verify strict availability checks reject parameters before writing
+      block:
+        - name: SYSCTL | Request a missing parameter in strict mode
+          ansible.builtin.include_role:
+            name: "{{ lookup('ansible.builtin.env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+          vars:
+            sysctl_ignore_unavailable: false
+            sysctl_d:
+              - file: 90-harden-net-ipv4.conf
+                settings:
+                  net.ipv4.sysctl_molecule_missing: 1
+
+        - name: SYSCTL | Reject unexpected strict-mode success
+          ansible.builtin.fail:
+            msg: Strict availability checking accepted a missing parameter.
+
+      rescue:
+        - name: SYSCTL | Confirm rejection occurred during the availability check
+          ansible.builtin.assert:
+            that:
+              - ansible_failed_task.name == 'SYSCTL | Inspect parameter availability before writing configuration'
+              - "'net.ipv4.sysctl_molecule_missing' in ansible_failed_result.unavailable"
+
+    - name: SYSCTL | Verify failed availability checks preserve configuration
+      become: true
+      become_user: root
+      ansible.builtin.script:
+        cmd: "{{ (playbook_dir ~ '/../sysctl_checks.py') | quote }} changed"
+        executable: /usr/bin/python3
+      changed_when: false

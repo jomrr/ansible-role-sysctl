@@ -1,38 +1,73 @@
 ---
-# role: jomrr.sysctl
+# role: sysctl
 # file: tasks/main.yml
 
-- name: "Role sysctl | install packages"
+- name: SYSCTL | Load platform settings
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', __sysctl_platform_files) }}"
+  vars:
+    __sysctl_platform_files:
+      files:
+        - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+        - "{{ ansible_facts.distribution }}.yml"
+        - "{{ ansible_facts.os_family }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: SYSCTL | Validate configuration filenames
+  ansible.builtin.assert:
+    that:
+      - __sysctl_file.file is match('^[A-Za-z0-9][A-Za-z0-9_.-]*[.]conf\Z')
+    quiet: true
+    fail_msg: Configuration filenames must be plain .conf basenames without whitespace or path separators.
+  loop: "{{ sysctl_d }}"
+  loop_control:
+    loop_var: __sysctl_file
+    label: "{{ __sysctl_file.file }}"
+
+- name: SYSCTL | Ensure one owner for each configuration file
+  ansible.builtin.assert:
+    that:
+      - sysctl_d | map(attribute='file') | unique | length == sysctl_d | length
+    quiet: true
+    fail_msg: Managed configuration filenames must be unique.
+
+- name: SYSCTL | Inspect parameter availability before writing configuration
+  become: true
+  become_user: root
+  sysctl_available:
+    keys: "{{ sysctl_d | map(attribute='settings') | map('list') | flatten }}"
+    ignore_unavailable: "{{ sysctl_ignore_unavailable }}"
+  register: __sysctl_available
+
+- name: SYSCTL | Install kernel configuration utilities
+  become: true
+  become_user: root
   ansible.builtin.package:
-    name: "{{ sysctl_packages }}"
+    name: "{{ __sysctl_packages }}"
     state: present
 
-- name: "Role sysctl | configure /etc/sysctl.conf"
-  ansible.builtin.template:
-    src: etc/sysctl.conf.j2
-    dest: /etc/sysctl.conf
-    mode: "0640"
-    owner: root
-    group: root
-    backup: "{{ sysctl_backup }}"
-  when: sysctl_conf | length > 0
-  notify: reload sysctl
-
-- name: "Role sysctl | ensure /etc/sysctl.d/"
+- name: SYSCTL | Ensure the configuration directory exists
+  become: true
+  become_user: root
   ansible.builtin.file:
-    path: /etc/sysctl.d/
+    path: /etc/sysctl.d
     state: directory
-    mode: "0750"
+    mode: '0750'
     owner: root
     group: root
 
-- name: "Role sysctl | configure /etc/sysctl.d/ files"
+- name: SYSCTL | Configure sysctl.d files
+  become: true
+  become_user: root
   ansible.builtin.template:
     src: etc/sysctl.d/sysctl.d.conf.j2
-    dest: "/etc/sysctl.d/{{ item.file }}"
-    mode: "0640"
+    dest: "/etc/sysctl.d/{{ __sysctl_file.file }}"
+    mode: '0600'
     owner: root
     group: root
     backup: "{{ sysctl_backup }}"
   loop: "{{ sysctl_d }}"
-  notify: "Reload sysctl"
+  loop_control:
+    loop_var: __sysctl_file
+    label: "{{ __sysctl_file.file }}"
+  notify: reload sysctl

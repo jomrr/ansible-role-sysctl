@@ -1,0 +1,7 @@
+---
+# role: sysctl
+# file: vars/AlmaLinux.yml
+
+__sysctl_packages:
+  - procps-ng
+  - systemd-udev

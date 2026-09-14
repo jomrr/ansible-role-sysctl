@@ -1,7 +1,13 @@
 ---
-# role: jomrr.sysctl
+# role: sysctl
 # file: handlers/main.yml
 
-- name: "Reload sysctl"
-  ansible.builtin.command: sysctl --system
-  changed_when: false
+- name: SYSCTL | Apply managed kernel settings
+  become: true
+  become_user: root
+  ansible.builtin.command:
+    argv: >-
+      {{ ['/usr/lib/systemd/systemd-sysctl', '--strict'] +
+         (sysctl_d | map(attribute='file') | sort | map('regex_replace', '^', '/etc/sysctl.d/') | list) }}
+  changed_when: true
+  listen: reload sysctl

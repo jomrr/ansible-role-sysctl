@@ -1,50 +1,59 @@
 ---
-# role: jomrr.sysctl
+# role: sysctl
 # file: molecule/default/molecule.yml
 
 dependency:
-  name: galaxy
+  name: "galaxy"
   options:
-    role-file: requirements.yml
+    requirements-file: "${MOLECULE_PROJECT_DIRECTORY}/collections.yml"
+    role-file: "${MOLECULE_PROJECT_DIRECTORY}/collections.yml"
 driver:
-  name: podman
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
-platforms:
-  - name: sysctl-almalinux
-    image: "docker.io/jomrr/molecule-almalinux:latest"
-    pre_build_image: true
-  - name: sysctl-alpine
-    image: "docker.io/jomrr/molecule-alpine:latest"
-    pre_build_image: true
-  - name: sysctl-arch
-    image: "docker.io/jomrr/molecule-archlinux:latest"
-    pre_build_image: true
-  - name: sysctl-debian
-    image: "docker.io/jomrr/molecule-debian:latest"
-    pre_build_image: true
-  - name: sysctl-fedora
-    image: "docker.io/jomrr/molecule-fedora:latest"
-    pre_build_image: true
-  - name: sysctl-opensuse
-    image: "docker.io/jomrr/molecule-opensuse-leap:15"
-    pre_build_image: true
-  - name: sysctl-tumbleweed
-    image: "docker.io/jomrr/molecule-opensuse-tumbleweed:latest"
-    pre_build_image: true
-  - name: sysctl-oraclelinux
-    image: "docker.io/jomrr/molecule-oraclelinux:latest"
-    pre_build_image: true
-  - name: sysctl-ubuntu
-    image: "docker.io/jomrr/molecule-ubuntu:latest"
-    pre_build_image: true
+  name: "podman"
 provisioner:
-  name: ansible
+  name: "ansible"
+  config_options:
+    defaults:
+      forks: 8
+      interpreter_python: "auto_silent"
+      allow_world_readable_tmpfiles: true
+      callbacks_enabled: "ansible.posix.profile_tasks,ansible.posix.timer"
+      callback_result_format: "yaml"
+      remote_tmp: "/tmp/.ansible/tmp"
+    ssh_connection:
+      pipelining: true
   log: true
   playbooks:
-    converge: ../resources/playbooks/converge.yml
-    verify: ../resources/playbooks/verify.yml
+    converge: "../resources/playbooks/converge.yml"
+    verify: "../resources/playbooks/verify.yml"
+    prepare: "../resources/playbooks/prepare.yml"
+    side_effect: "../resources/playbooks/side_effect.yml"
 verifier:
-  name: ansible
+  name: "ansible"
+scenario:
+  test_sequence:
+    - "dependency"
+    - "destroy"
+    - "syntax"
+    - "create"
+    - "prepare"
+    - "check"
+    - "converge"
+    - "idempotence"
+    - "check"
+    - "verify"
+    - "side_effect"
+    - "converge"
+    - "idempotence"
+    - "verify"
+    - "destroy"
+  name: "default"
+platforms:
+  - pre_build_image: true
+    override_command: false
+    systemd: "true"
+    capabilities:
+      - "NET_ADMIN"
+    security_opts:
+      - "unmask=/proc/sys"
+    name: "sysctl"
+    image: "docker.io/${uns:-jomrr}/molecule-${img:-fedora}:${tag:-latest}"

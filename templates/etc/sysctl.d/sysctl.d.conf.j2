@@ -1,8 +1,6 @@
+# Managed by ansible.
 # file: {{ template_destpath }}
-# vim: set noai sw=4 tw=4 ts=4 et:
-# {{ ansible_managed }}
-# entries: {{ item.settings | length }}
 
-{% for setting in item.settings | dict2items | sort(attribute='key') %}
-{{ setting.key | string }}={{ setting.value }}
+{% for __sysctl_key, __sysctl_value in __sysctl_file.settings | dictsort if __sysctl_key in __sysctl_available.available %}
+{{ __sysctl_key }}={{ __sysctl_value }}
 {% endfor %}

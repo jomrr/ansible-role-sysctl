@@ -1,0 +1,19 @@
+---
+# role: sysctl
+# file: molecule/resources/playbooks/prepare.yml
+
+- name: SYSCTL | Prepare isolated kernel configuration tests
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: SYSCTL | Wait for Ansible connectivity
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+
+    - name: SYSCTL | Seed different network settings in the test namespace
+      become: true
+      become_user: root
+      ansible.builtin.script:
+        cmd: "{{ (playbook_dir ~ '/../sysctl_checks.py') | quote }} prepare"
+        executable: /usr/bin/python3
+      changed_when: true

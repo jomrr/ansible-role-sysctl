@@ -1,12 +1,15 @@
-# role: jomrr.sysctl
+---
+# role: sysctl
 # file: molecule/resources/playbooks/verify.yml
-# code: language=ansible-jinja
 
-- name: "PLAYBOOK | Verify | sysctl"
+- name: SYSCTL | Verify persistent and active hardening
   hosts: all
   gather_facts: false
   tasks:
-    - name: "Assert true"
-      ansible.builtin.assert:
-        that: "true"
-        fail_msg: "This should never fail"
+    - name: SYSCTL | Verify managed file access and namespace settings
+      become: true
+      become_user: root
+      ansible.builtin.script:
+        cmd: "{{ (playbook_dir ~ '/../sysctl_checks.py') | quote }} verify"
+        executable: /usr/bin/python3
+      changed_when: false
