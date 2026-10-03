@@ -14,7 +14,8 @@ Persist kernel hardening settings in seven sysctl.d files and apply the
 parameters available in the current namespace. Before writing configuration,
 the role checks each requested /proc/sys path for existence and write access
 with the privileges used to apply settings. Missing and write-protected
-parameters are omitted by default. With sysctl_ignore_unavailable set to false,
+parameters are retained as commented assignments with their configured values
+and are not applied. With sysctl_ignore_unavailable set to false,
 the role fails before writing configuration if any parameter is unavailable.
 Invalid writable values fail when applied.
 The role is idempotent: unchanged configuration does not trigger a reload.
@@ -64,8 +65,8 @@ sysctl_backup: true
 
 Type: `bool`. Required: `false`.
 
-Omit missing or write-protected parameters before writing configuration; false
-fails the availability check instead.
+Comment out missing or write-protected parameters in configuration; false fails
+the availability check instead.
 
 Default:
 

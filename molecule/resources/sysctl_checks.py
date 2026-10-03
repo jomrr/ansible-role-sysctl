@@ -22,7 +22,7 @@ def prepare() -> None:
 
 
 def verify() -> None:
-    """Verify filtered files, permissions, and all active network defaults."""
+    """Verify commented unavailable settings, permissions, and active network defaults."""
     assert Path('/proc/sys/kernel/kexec_load_disabled').read_text(encoding='ascii') == (
         Path('/tmp/molecule-sysctl-kexec-before').read_text(encoding='ascii')
     )
@@ -31,9 +31,11 @@ def verify() -> None:
         info = path.stat()
         assert info.st_uid == 0 and info.st_gid == 0, path
         assert S_IMODE(info.st_mode) == 0o600, path
-    assert 'kernel.kexec_load_disabled=' not in (
-        Path('/etc/sysctl.d/90-harden-kernel.conf').read_text(encoding='ascii')
-    )
+    kernel_lines = Path('/etc/sysctl.d/90-harden-kernel.conf').read_text(
+        encoding='ascii'
+    ).splitlines()
+    assert '# kernel.kexec_load_disabled=1' in kernel_lines
+    assert 'kernel.kexec_load_disabled=1' not in kernel_lines
     expected = {
         'net.ipv4.ip_forward': '0',
         'net.ipv4.conf.all.forwarding': '0',
@@ -66,15 +68,18 @@ def verify() -> None:
         assert actual == value, (key, value, actual)
     print(
         f'Verified seven files, {len(expected)} active network parameters '
-        'and excluded unavailable keys'
+        'and commented unavailable keys'
     )
 
 
 def verify_changed() -> None:
     """Verify an updated sysctl.d file applies only available parameters."""
-    content = Path('/etc/sysctl.d/90-harden-net-ipv4.conf').read_text(encoding='ascii')
-    assert 'net.ipv4.tcp_syncookies=0' in content
-    assert 'net.ipv4.sysctl_molecule_missing' not in content
+    lines = Path('/etc/sysctl.d/90-harden-net-ipv4.conf').read_text(
+        encoding='ascii'
+    ).splitlines()
+    assert 'net.ipv4.tcp_syncookies=0' in lines
+    assert '# net.ipv4.sysctl_molecule_missing=1' in lines
+    assert 'net.ipv4.sysctl_molecule_missing=1' not in lines
     assert Path('/proc/sys/net/ipv4/tcp_syncookies').read_text(encoding='ascii').strip() == '0'
 
 

@@ -19,7 +19,7 @@
     - name: SYSCTL | Apply the changed configuration before checking it
       ansible.builtin.meta: flush_handlers
 
-    - name: SYSCTL | Verify the changed setting and exclusion of unavailable parameters
+    - name: SYSCTL | Verify the changed setting and commented unavailable parameters
       become: true
       become_user: root
       ansible.builtin.script:

@@ -16,8 +16,8 @@ argument_specs:
         type: bool
         default: true
         description:
-          - Omit missing or write-protected parameters before writing configuration; false
-            fails the availability check instead.
+          - Comment out missing or write-protected parameters in configuration; false fails
+            the availability check instead.
       sysctl_d:
         type: list
         elements: dict

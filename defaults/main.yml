@@ -5,7 +5,7 @@
 # Back up managed configuration files before replacing their contents.
 sysctl_backup: true
 
-# Omit missing and write-protected parameters before writing configuration; false fails the precheck.
+# Comment out missing and write-protected parameters; false fails the availability check.
 sysctl_ignore_unavailable: true
 
 # Configuration files and settings managed in /etc/sysctl.d with mode 0600.
