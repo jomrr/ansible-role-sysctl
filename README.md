@@ -117,36 +117,36 @@ sysctl_d:
       vm.unprivileged_userfaultfd: 0
   - file: 90-harden-net-ipv4.conf
     settings:
+      net.ipv4.ip_forward: 0
+      net.ipv4.conf.all.forwarding: 0
+      net.ipv4.conf.default.forwarding: 0
       net.ipv4.conf.all.accept_redirects: 0
       net.ipv4.conf.all.accept_source_route: 0
-      net.ipv4.conf.all.forwarding: 0
       net.ipv4.conf.all.log_martians: 1
       net.ipv4.conf.all.rp_filter: 1
       net.ipv4.conf.all.secure_redirects: 0
       net.ipv4.conf.all.send_redirects: 0
       net.ipv4.conf.default.accept_redirects: 0
       net.ipv4.conf.default.accept_source_route: 0
-      net.ipv4.conf.default.forwarding: 0
       net.ipv4.conf.default.log_martians: 1
       net.ipv4.conf.default.rp_filter: 2
       net.ipv4.conf.default.secure_redirects: 0
       net.ipv4.conf.default.send_redirects: 0
       net.ipv4.icmp_echo_ignore_broadcasts: 1
       net.ipv4.icmp_ignore_bogus_error_responses: 1
-      net.ipv4.ip_forward: 0
       net.ipv4.tcp_rfc1337: 1
       net.ipv4.tcp_syncookies: 1
   - file: 90-harden-net-ipv6.conf
     settings:
+      net.ipv6.conf.all.forwarding: 0
+      net.ipv6.conf.default.forwarding: 0
       net.ipv6.conf.all.accept_ra: 0
       net.ipv6.conf.all.accept_redirects: 0
       net.ipv6.conf.all.accept_source_route: 0
-      net.ipv6.conf.all.forwarding: 0
       net.ipv6.conf.all.use_tempaddr: 2
       net.ipv6.conf.default.accept_ra: 0
       net.ipv6.conf.default.accept_redirects: 0
       net.ipv6.conf.default.accept_source_route: 0
-      net.ipv6.conf.default.forwarding: 0
       net.ipv6.conf.default.use_tempaddr: 0
 ```
 
@@ -173,7 +173,8 @@ reload handlers are skipped.
 ## Service Behavior
 
 Changed files notify one reload handler. systemd-sysctl applies only the
-managed sysctl.d files in filename order. No daemon restart is needed.
+managed sysctl.d files in filename order, with settings inside each file
+kept in declaration order. No daemon restart is needed.
 
 ### Handlers
 
@@ -188,6 +189,9 @@ managed sysctl.d files in filename order. No daemon restart is needed.
 
 ## Operational Notes
 
+- Declare forwarding switches before dependent network settings. Changing IPv4
+  forwarding resets parameters such as net.ipv4.conf.all.accept_redirects; those
+  settings must be applied afterward. The defaults follow this order.
 - At boot, sysctl.d files are sorted lexicographically across directories.
   Identical filenames in /etc take precedence over /run and vendor directories.
   Later files may override these settings. The role reloads only its managed
@@ -237,12 +241,13 @@ Replace the default file list with a custom sysctl.d file.
       sysctl_d:
         - file: 90-custom.conf
           settings:
-            net.ipv4.tcp_syncookies: 1
             net.ipv4.ip_forward: 1
+            net.ipv4.tcp_syncookies: 1
 ```
 
 ## References
 
+- [Linux IP sysctl parameters](https://docs.kernel.org/networking/ip-sysctl.html)
 - [systemd-sysctl](https://www.freedesktop.org/software/systemd/man/latest/systemd-sysctl.service.html)
 - [sysctl.d precedence](https://www.freedesktop.org/software/systemd/man/latest/sysctl.d.html)
 

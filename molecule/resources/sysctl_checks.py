@@ -14,6 +14,8 @@ def prepare() -> None:
     Path('/tmp/molecule-sysctl-kexec-before').write_text(
         Path('/proc/sys/kernel/kexec_load_disabled').read_text(encoding='ascii'), encoding='ascii'
     )
+    Path('/proc/sys/net/ipv4/ip_forward').write_text('1\n', encoding='ascii')
+    Path('/proc/sys/net/ipv6/conf/all/forwarding').write_text('1\n', encoding='ascii')
     Path('/proc/sys/net/ipv4/tcp_syncookies').write_text('0\n', encoding='ascii')
     Path('/proc/sys/net/ipv4/conf/all/rp_filter').write_text('0\n', encoding='ascii')
     Path('/proc/sys/net/ipv6/conf/all/accept_ra').write_text('1\n', encoding='ascii')
@@ -33,6 +35,11 @@ def verify() -> None:
         Path('/etc/sysctl.d/90-harden-kernel.conf').read_text(encoding='ascii')
     )
     expected = {
+        'net.ipv4.ip_forward': '0',
+        'net.ipv4.conf.all.forwarding': '0',
+        'net.ipv4.conf.default.forwarding': '0',
+        'net.ipv6.conf.all.forwarding': '0',
+        'net.ipv6.conf.default.forwarding': '0',
         'net.ipv4.conf.all.accept_redirects': '0',
         'net.ipv4.conf.all.accept_source_route': '0',
         'net.ipv4.conf.all.rp_filter': '1',
@@ -58,7 +65,8 @@ def verify() -> None:
         actual = Path('/proc/sys', key.replace('.', '/')).read_text(encoding='ascii').strip()
         assert actual == value, (key, value, actual)
     print(
-        'Verified seven files, 20 active network parameters and exclusion of unavailable parameters'
+        f'Verified seven files, {len(expected)} active network parameters '
+        'and excluded unavailable keys'
     )
 
 
