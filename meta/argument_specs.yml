@@ -82,7 +82,7 @@ argument_specs:
               net.ipv6.conf.default.use_tempaddr: 0
         description:
           - Configuration files managed in /etc/sysctl.d with root ownership and mode 0600.
-          - The default seven hardening files and their 38 settings are defined in defaults/main.yml.
+          - The default hardening files and their settings are defined in defaults/main.yml.
         options:
           file:
             type: str

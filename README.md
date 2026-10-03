@@ -78,8 +78,7 @@ sysctl_ignore_unavailable: true
 Type: `list`. Required: `false`.
 
 Configuration files managed in /etc/sysctl.d with root ownership and mode 0600.
-The default seven hardening files and their 38 settings are defined in
-defaults/main.yml.
+The default hardening files and their settings are defined in defaults/main.yml.
 
 Default:
 
@@ -250,4 +249,4 @@ Replace the default file list with a custom sysctl.d file.
 This project is licensed under the MIT License.
 See [LICENSE](LICENSE) for the full license text.
 
-Copyright (c) 2021-2024 Jonas Mauer.
+Copyright (c) 2021-2026 Jonas Mauer.
