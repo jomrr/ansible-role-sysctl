@@ -15,17 +15,19 @@ provisioner:
     defaults:
       forks: 8
       interpreter_python: "auto_silent"
-      allow_world_readable_tmpfiles: true
       callbacks_enabled: "ansible.posix.profile_tasks,ansible.posix.timer"
       callback_result_format: "yaml"
-      remote_tmp: "/tmp/.ansible/tmp"
-    ssh_connection:
+    connection:
       pipelining: true
+  inventory:
+    group_vars:
+      all:
+        ansible_podman_mount_detection: false
   log: true
   playbooks:
+    prepare: "../resources/playbooks/prepare.yml"
     converge: "../resources/playbooks/converge.yml"
     verify: "../resources/playbooks/verify.yml"
-    prepare: "../resources/playbooks/prepare.yml"
     side_effect: "../resources/playbooks/side_effect.yml"
 verifier:
   name: "ansible"
